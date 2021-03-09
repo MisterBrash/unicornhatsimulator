@@ -18,7 +18,7 @@ try:
     import unicornhathd as unicorn
     print("unicorn hat hd detected")
 except ImportError:
-    from unicorn_hat_sim import unicornhathd as unicorn
+    from unicornhatsimulator import unicornhathd as unicorn
 ```
 
 You can choose from `import unicornhathd` (16x16), `import unicornhat` (8x8) and `import unicornphat` (8x4). 
