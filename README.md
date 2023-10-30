@@ -3,8 +3,9 @@ Unicorn HAT (HD) simulator - Originally by Jannis Hermanns &lt;jannis@gmail.com>
 
 Simulates a Unicorn HAT HD (and should work for the 8x8 HAT and the 8x4 PHAT as well) using pygame.
 The version you see here is a modified version from two original sources in order to:
-- Add set_all(r, g, b)
-- Modify the clear() function to act like the real HAT
+- Add `set_all(r, g, b)`
+- Modify the `clear()` function to act like the real HAT
+- Coming soon... `get_pixels()` and `get_pixel(x, y)`
 
 ## Usage
 
