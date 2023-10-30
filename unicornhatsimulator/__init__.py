@@ -1,13 +1,15 @@
-# Modified version of the unicorn-hat-sim package
-# from Mark Pitman (https://pypi.org/project/unicorn-hat-sim/)
-# which was a modified version from Jannis Hermanns (https://github.com/jayniz/unicorn-hat-sim)
+'''
+Modified version of the unicorn-hat-sim package
+from Mark Pitman (https://pypi.org/project/unicorn-hat-sim/)
+which was a modified version from Jannis Hermanns (https://github.com/jayniz/unicorn-hat-sim)
 
-# The clear function wasn't working as expected and set_all wasn't implemented.
-# I've updated it below, however I'm not a python programmer
-# and there might be a better way. ~ Matt Brash
-# In the future I want to add other functions to resize the pixels, etc
+The clear function wasn't working as expected and set_all wasn't implemented.
+I've updated it below, however I'm not a python programmer
+and there might be a better way. ~ Matt Brash
+In the future I want to add other functions to resize the pixels, etc
+'''
 
-# Version 1.0.1
+# Version 1.0.4
 
 import sys
 import colorsys
@@ -18,6 +20,28 @@ try:
 except ImportError:
     print("To simulate a unicorn HAT on your computer, please pip install pygame")
 
+COLORS = {
+    'red': (255, 0, 0),
+    'lime': (0, 255, 0),
+    'blue': (0, 0, 255),
+    'yellow': (255, 255, 0),
+    'magenta': (255, 0, 255),
+    'cyan': (0, 255, 255),
+    'black': (0, 0, 0),
+    'white': (255, 255, 255),
+    'gray': (127, 127, 127),
+    'grey': (127, 127, 127),
+    'silver': (192, 192, 192),
+    'maroon': (128, 0, 0),
+    'olive': (128, 128, 0),
+    'green': (0, 128, 0),
+    'teal': (0, 128, 128),
+    'navy': (0, 0, 128),
+    'orange': (255, 165, 0),
+    'gold': (255, 215, 0),
+    'purple': (128, 0, 128),
+    'indigo': (75, 0, 130)
+}
 
 class UnicornHatSim(object):
     def __init__(self, width, height, rotation_offset=0):
@@ -36,19 +60,47 @@ class UnicornHatSim(object):
         self.window_height = height * self.pixel_size
 
         # Init pygame and off we go
-        pygame.init()
+        # pygame.init()   
         pygame.display.set_caption("Unicorn HAT simulator")
         self.screen = pygame.display.set_mode(
             [self.window_width, self.window_height])
         self.clear()
 
-    def set_pixel(self, x, y, r, g, b):
+    # Set the pixel size and resize the window (no error checking)
+    def set_pixel_size(self, pixel_size):
+        self.pixel_size = pixel_size
+        self.window_width = self.width * self.pixel_size
+        self.window_height = self.height * self.pixel_size
+        self.screen = pygame.display.set_mode(
+            [self.window_width, self.window_height])
+        self.show()
+
+    def set_pixel(self, x, y, r, g=None, b=None):
         i = (x * self.width) + y
+        if type(r) is tuple:
+            r, g, b = r
+
+        elif type(r) is str:
+            try:
+                r, g, b = COLORS[r.lower()]
+
+            except KeyError:
+                raise ValueError('Invalid color!')
+
         self.pixels[i] = [int(r), int(g), int(b)]
 
     # Turn all pixels the given colour
     def set_all(self, r, g, b):
         self.pixels = [(r, g, b)] * self.width * self.height
+
+    # Get the colour of a given pixel as a tuple
+    def get_pixel(self, x, y):
+        i = (x * self.width) + y
+        return tuple(self.pixels[i])
+  
+    # Get all of the pixels (return the buffer)
+    def get_pixels(self):
+        return self.pixels
 
     def draw(self):
         for event in pygame.event.get():  # User did something
