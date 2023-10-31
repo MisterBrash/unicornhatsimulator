@@ -100,7 +100,16 @@ class UnicornHatSim(object):
   
     # Get all of the pixels (return the buffer)
     def get_pixels(self):
-        return self.pixels
+        # The actual HAT stores the pixels differently (in a 3D array)
+        # Maybe I'll modify this in the future to match, but for now
+        # we'll fake it. ~ M. Brash
+        ret = []
+        for y in range(0, 16):
+            ret.append([])
+            for x in range(0, 16):
+                ret[y].append(self.pixels[(x * self.width) + y])
+
+        return ret
 
     def draw(self):
         for event in pygame.event.get():  # User did something
