@@ -60,7 +60,7 @@ class UnicornHatSim(object):
         self.window_height = height * self.pixel_size
 
         # Init pygame and off we go
-        # pygame.init()   
+        pygame.init()   
         pygame.display.set_caption("Unicorn HAT simulator")
         self.screen = pygame.display.set_mode(
             [self.window_width, self.window_height])
