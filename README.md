@@ -1,4 +1,7 @@
-# Unicorn HAT (HD) simulator
+# Unicorn HAT (HD) simulator 
+
+###### v1.0.4
+
 Unicorn HAT (HD) simulator - Originally by Jannis Hermanns &lt;jannis@gmail.com>, modified by Mark Pitman &lt;mark.pitman@gmail.com> and adjusted by me (Matt Brash &lt;matt@brash.ca>)
 
 Simulates a Unicorn HAT HD (and should work for the 8x8 HAT and the 8x4 PHAT as well) using pygame.
