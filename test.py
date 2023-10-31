@@ -4,6 +4,7 @@ from time import sleep
 from random import randint
 from unicornhatsimulator import unicornhathd as u
 
+u.set_pixel_size(35)
 sleep(1)
 print("Window Loading... ")
 u.set_pixel(3, 4, "silver")
