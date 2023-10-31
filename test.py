@@ -1,16 +1,19 @@
 '''Testing the simulator'''
 
 from time import sleep
+from random import randint
 from unicornhatsimulator import unicornhathd as u
 
-
 sleep(1)
-print("Window Loading... Setting up pixel(s)")
+print("Window Loading... ")
 u.set_pixel(3, 4, "silver")
-u.show()
-print(u.get_pixel(3, 4))
-sleep(1)
-u.set_pixel_size(35)
 
-print("Pausing 5 seconds before closing")
-sleep(5)
+for i in range(1, 5000):
+    u.set_pixel(randint(0, 15), randint(0, 15), randint(0, 255), randint(0, 255), randint(0, 255))
+    u.show()
+
+v = u.get_pixels()
+print(v)
+
+print("Pausing 3 seconds before closing")
+sleep(3)
