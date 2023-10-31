@@ -3,10 +3,10 @@ Unicorn HAT (HD) simulator - Originally by Jannis Hermanns &lt;jannis@gmail.com>
 
 Simulates a Unicorn HAT HD (and should work for the 8x8 HAT and the 8x4 PHAT as well) using pygame.
 The version you see here is a modified version from two original sources in order to:
-- Add `set_all(r, g, b)`
-- Modify the `clear()` function to act like the real HAT
-- Coming soon... `get_pixels()` and `get_pixel(x, y)`
-
+- Added `set_all(r, g, b)`
+- Modified the `clear()` function to act like the real HAT
+- Added `get_pixels()` and `get_pixel(x, y)`
+    - **Note:** get_pixels() is currently untested
 ## Usage
 
 If you want your code to run on your computer as well as your Pi, you could do something like this:
@@ -15,6 +15,10 @@ If you want your code to run on your computer as well as your Pi, you could do s
 1. Adjust your `import unicornhathd` statement as follows:
 
 ```python
+'''
+Note: The alias "as unicorn" can be whatever you want (or nothing at all).
+For example: as u
+'''
 try:
     import unicornhathd as unicorn
     print("unicorn hat hd detected")
@@ -32,7 +36,11 @@ You can choose from `import unicornhathd` (16x16), `import unicornhat` (8x8) and
 
 ## TODO
 
-- [ ] find a python person who shows me how this would be done properly
+- [ ] find a python person to show me how this would be done properly. For example - leaving the window open at the end.
 - [ ] fix/check rotation
 - [ ] add a proper LED glow effect so it looks more like a real unicorn HAT
 - [x] publish via pip ([now online at pypi](https://pypi.org/project/unicornhatsimulator/))
+- [x] add `get_pixel(x, y)` and `get_pixels`
+- [x] add non-standard `set_pixel_size(p)` to increase or decrease dot sizes
+
+
