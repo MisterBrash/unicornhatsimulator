@@ -6,7 +6,9 @@ which was a modified version from Jannis Hermanns (https://github.com/jayniz/uni
 The clear function wasn't working as expected and set_all wasn't implemented.
 I've updated it below, however I'm not a python programmer
 and there might be a better way. ~ Matt Brash
-In the future I want to add other functions to resize the pixels, etc
+
+Origin (0, 0) is top-left for all three types of HATs. As far as I know, this is the
+way Pimoroni designed them and it matches computer screens and game canvas, etc.
 '''
 
 # Version 1.0.4
@@ -53,7 +55,7 @@ class UnicornHatSim:
         self.rotation_offset = rotation_offset
         self.rotation(0)
         self.pixels = [(0, 0, 0)] * width * height
-        self.pixel_size = 15
+        self.pixel_size = 20
         self.width = width
         self.height = height
         self.window_width = self.width * self.pixel_size
@@ -141,8 +143,9 @@ class UnicornHatSim:
         w_y = int(y * p + self.pixel_size / 2)
         r = int(self.pixel_size / 4)
         color = self.pixels[self.index(x, y)]
-        pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r, color)
-        pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, r, color)
+        #pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r+1, (color[0],color[1],color[2],100))
+        pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, r, (color[0],color[1],color[2],140))
+        pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, int(r*.7), color)
 
     def get_shape(self):
         return (self.width, self.height)
@@ -190,6 +193,12 @@ class UnicornHatSim:
             yy = self.width - 1 - x
         return (yy * self.width) + xx
 
+
+'''
+Expose the three types of HATs. None are rotated by default,
+origin is top-left with y-values increasing as you go down the
+screen. This is intentional and should match the physical device.
+'''
 
 # SD hat
 unicornhat = UnicornHatSim(8, 8)
