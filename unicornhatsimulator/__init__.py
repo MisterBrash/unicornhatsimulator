@@ -63,6 +63,12 @@ class UnicornHatSim:
         self.on = False
         self.clear()
 
+    @property
+    def COLORS(self):
+        k = list(COLORS.keys())
+        k.sort()
+        return k
+    
     def power_on(self):
         # Init pygame and off we go
         pygame.init()   
