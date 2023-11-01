@@ -13,10 +13,10 @@ In the future I want to add other functions to resize the pixels, etc
 
 import sys
 import colorsys
-import pygame.gfxdraw
 
 try:
     import pygame
+    import pygame.gfxdraw
 except ImportError:
     print("To simulate a unicorn HAT on your computer, please pip install pygame")
 
@@ -43,7 +43,7 @@ COLORS = {
     'indigo': (75, 0, 130)
 }
 
-class UnicornHatSim(object):
+class UnicornHatSim:
     def __init__(self, width, height, rotation_offset=0):
         # Compat with old library
         self.AUTO = None
@@ -56,27 +56,31 @@ class UnicornHatSim(object):
         self.pixel_size = 15
         self.width = width
         self.height = height
-        self.window_width = width * self.pixel_size
-        self.window_height = height * self.pixel_size
+        self.window_width = self.width * self.pixel_size
+        self.window_height = self.height * self.pixel_size
+        self.on = False
+        self.clear()
 
+    def power_on(self):
         # Init pygame and off we go
         pygame.init()   
         pygame.display.set_caption("Unicorn HAT simulator")
         self.screen = pygame.display.set_mode(
             [self.window_width, self.window_height])
-        self.clear()
+        self.on = True
 
     # Set the pixel size and resize the window (no error checking)
     def set_pixel_size(self, pixel_size):
         self.pixel_size = pixel_size
         self.window_width = self.width * self.pixel_size
         self.window_height = self.height * self.pixel_size
-        self.screen = pygame.display.set_mode(
-            [self.window_width, self.window_height])
+        #self.screen = pygame.display.set_mode(
+            #[self.window_width, self.window_height])
         self.show()
 
     def set_pixel(self, x, y, r, g=None, b=None):
-        i = (x * self.width) + y
+        if not self.on: self.power_on()
+        i = (y * self.width) + x
         if type(r) is tuple:
             r, g, b = r
 
@@ -91,11 +95,12 @@ class UnicornHatSim(object):
 
     # Turn all pixels the given colour
     def set_all(self, r, g, b):
+        if not self.on: self.power_on()
         self.pixels = [(r, g, b)] * self.width * self.height
 
     # Get the colour of a given pixel as a tuple
     def get_pixel(self, x, y):
-        i = (x * self.width) + y
+        i = (y * self.width) + x
         return tuple(self.pixels[i])
   
     # Get all of the pixels (return the buffer)
@@ -104,9 +109,9 @@ class UnicornHatSim(object):
         # Maybe I'll modify this in the future to match, but for now
         # we'll fake it. ~ M. Brash
         ret = []
-        for y in range(0, 16):
+        for y in range(0, self.width):
             ret.append([])
-            for x in range(0, 16):
+            for x in range(0, self.height):
                 ret[y].append(self.pixels[(x * self.width) + y])
 
         return ret
@@ -122,9 +127,10 @@ class UnicornHatSim(object):
                 self.draw_led(x, y)
 
     def show(self):
+        if not self.on: self.power_on()
         self.screen.fill((0, 0, 0))
         self.draw()
-        pygame.display.flip()
+        pygame.display.update()
 
     def draw_led(self, x, y):
         self.draw_gfxcircle(x, y)
@@ -132,7 +138,7 @@ class UnicornHatSim(object):
     def draw_gfxcircle(self, x, y):
         p = self.pixel_size
         w_x = int(x * p + self.pixel_size / 2)
-        w_y = int((self.height - 1 - y) * p + self.pixel_size / 2)
+        w_y = int(y * p + self.pixel_size / 2)
         r = int(self.pixel_size / 4)
         color = self.pixels[self.index(x, y)]
         pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r, color)
@@ -182,12 +188,14 @@ class UnicornHatSim(object):
         elif rot == 270:
             xx = y
             yy = self.width - 1 - x
-        return (xx * self.width) + yy
+        return (yy * self.width) + xx
 
 
-# SD hats works as expected
+# SD hat
 unicornhat = UnicornHatSim(8, 8)
-unicornphat = UnicornHatSim(8, 4)
 
-# Unicornhat HD seems to be the other way around (not that there's anything wrong with that), so we rotate it 180°
-unicornhathd = UnicornHatSim(16, 16, 180)
+# Unicornhat HD
+unicornhathd = UnicornHatSim(16, 16)
+
+# PHAT
+unicornphat = UnicornHatSim(8, 4)
