@@ -11,10 +11,11 @@ u.set_pixel(0, 0, 255, 0, 255)
 u.set_pixel(0, 1,255, 255, 0)
 u.set_pixel(1, 0, 0, 255, 0)
 u.set_pixel(1, 1, 0, 0, 255)
-u.set_pixel(7, 4, 255, 255, 255)
-u.set_pixel(6, 4,255, 255, 0)
-u.set_pixel(7, 3, 0, 255, 0)
-u.set_pixel(6, 3, 0, 0, 255)
+
+u.set_pixel(7, 3, 255, 255, 255)
+u.set_pixel(6, 3, 255, 255, 0)
+u.set_pixel(7, 2, 0, 255, 0)
+u.set_pixel(6, 2, 0, 0, 255)
 u.show()
 
 while True:
