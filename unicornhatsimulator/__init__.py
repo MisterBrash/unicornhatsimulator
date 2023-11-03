@@ -46,6 +46,7 @@ COLORS = {
 }
 
 class UnicornHatSim:
+    """Class representing a Pimoroni Unicorn HAT of various size"""
     def __init__(self, width, height, rotation_offset=0):
         # Compat with old library
         self.AUTO = None
@@ -60,25 +61,27 @@ class UnicornHatSim:
         self.height = height
         self.window_width = self.width * self.pixel_size
         self.window_height = self.height * self.pixel_size
+        self.screen = None
         self.on = False
         self.clear()
 
     @property
-    def COLORS(self):
+    def colors(self):
+        """List the available colour strings (non-standard)"""
         k = list(COLORS.keys())
         k.sort()
         return k
-    
+
     def power_on(self):
-        # Init pygame and off we go
+        """Initialize pygame, show the window, etc"""
         pygame.init()   
         pygame.display.set_caption("Unicorn HAT simulator")
         self.screen = pygame.display.set_mode(
             [self.window_width, self.window_height])
         self.on = True
 
-    # Set the pixel size and resize the window (no error checking)
     def set_pixel_size(self, pixel_size):
+        """Set the pixel size and resize the window (no error checking)"""
         self.pixel_size = pixel_size
         self.window_width = self.width * self.pixel_size
         self.window_height = self.height * self.pixel_size
@@ -87,32 +90,40 @@ class UnicornHatSim:
         self.show()
 
     def set_pixel(self, x, y, r, g=None, b=None):
-        if not self.on: self.power_on()
+        """Set the value of a pixel in the buffer based on RGB"""
+        if not self.on:
+            self.power_on()
         i = (y * self.width) + x
-        if type(r) is tuple:
+        if isinstance(r, tuple):
             r, g, b = r
 
-        elif type(r) is str:
+        elif isinstance(r, str):
             try:
                 r, g, b = COLORS[r.lower()]
 
-            except KeyError:
-                raise ValueError('Invalid color!')
+            except KeyError as e:
+                raise ValueError('Invalid color!') from e
 
         self.pixels[i] = [int(r), int(g), int(b)]
 
-    # Turn all pixels the given colour
+    def set_pixel_hsv(self, x, y, h, s=1.0, v=1.0):
+        """Set a single pixel in the buffer based on Hue, Saturation, Vibrance"""
+        r, g, b = [int(n*255) for n in colorsys.hsv_to_rgb(h, s, v)]
+        self.set_pixel(x, y, r, g, b)
+
     def set_all(self, r, g, b):
-        if not self.on: self.power_on()
+        """Set all pixels the given RGB (in the buffer)"""
+        if not self.on:
+            self.power_on()
         self.pixels = [(r, g, b)] * self.width * self.height
 
-    # Get the colour of a given pixel as a tuple
     def get_pixel(self, x, y):
+        """Get the colour of a given pixel as a tuple"""
         i = (y * self.width) + x
         return tuple(self.pixels[i])
-  
-    # Get all of the pixels (return the buffer)
+
     def get_pixels(self):
+        """Get all of the pixels (return the buffer)"""
         # The actual HAT stores the pixels differently (in a 3D array)
         # Maybe I'll modify this in the future to match, but for now
         # we'll fake it. ~ M. Brash
@@ -124,7 +135,13 @@ class UnicornHatSim:
 
         return ret
 
-    def draw(self):
+    def show(self):
+        """Update the HAT based on the data in the buffer"""
+        if not self.on:
+            self.power_on()
+
+        self.screen.fill((0, 0, 0))
+
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:
                 print("Exiting...")
@@ -133,55 +150,55 @@ class UnicornHatSim:
         for x in range(self.width):
             for y in range(self.height):
                 self.draw_led(x, y)
-
-    def show(self):
-        if not self.on: self.power_on()
-        self.screen.fill((0, 0, 0))
-        self.draw()
         pygame.display.update()
 
     def draw_led(self, x, y):
-        self.draw_gfxcircle(x, y)
+        """Draw a single LED (not sure why it's here.)"""
+        self.__draw_gfxcircle(x, y)
 
-    def draw_gfxcircle(self, x, y):
+    def __draw_gfxcircle(self, x, y):
+        """Draw a single LED"""
         p = self.pixel_size
         w_x = int(x * p + self.pixel_size / 2)
         w_y = int(y * p + self.pixel_size / 2)
         r = int(self.pixel_size / 4)
-        color = self.pixels[self.index(x, y)]
-        #pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r+1, (color[0],color[1],color[2],100))
+        color = self.pixels[self.__index(x, y)]
+        #pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r, (color[0],color[1],color[2],100))
         pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, r, (color[0],color[1],color[2],140))
         pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, int(r*.7), color)
 
     def get_shape(self):
+        """Get the dimensions of the screen (HAT)"""
         return (self.width, self.height)
 
     def brightness(self, *args):
+        """Set the brightness of the HAT (currently not used)"""
         pass
 
     def rotation(self, r):
+        """Set the rotation of the HAT"""
         self._rotation = int(round(r/90.0)) % 3
 
     # Clear the buffers
     def clear(self):
+        """Clear the buffer (but not the screen)"""
         self.pixels = [(0, 0, 0)] * self.width * self.height
-        
 
     def get_rotation(self):
+        """Get the rotation setting for the HAT"""
         return self._rotation * 90
 
     def set_layout(self, *args):
+        """Not used, here for compatibility"""
         pass
 
-    def set_pixel_hsv(self, x, y, h, s=1.0, v=1.0):
-        r, g, b = [int(n*255) for n in colorsys.hsv_to_rgb(h, s, v)]
-        self.set_pixel(x, y, r, g, b)
-
     def off(self):
-        print("Closing window")
-        pygame.quit()
+        """Turn off the HAT (clear and show)"""
+        self.clear()
+        self.show()
 
-    def index(self, x, y):
+    def __index(self, x, y):
+        """Return the index of a pixel within the buffer"""
         # Offset to match device rotation
         rot = (self.get_rotation() + self.rotation_offset) % 360
 
@@ -199,12 +216,9 @@ class UnicornHatSim:
             yy = self.width - 1 - x
         return (yy * self.width) + xx
 
-
-'''
-Expose the three types of HATs. None are rotated by default,
-origin is top-left with y-values increasing as you go down the
-screen. This is intentional and should match the physical device.
-'''
+# Expose the three types of HATs. None are rotated by default,
+# origin is top-left with y-values increasing as you go down the
+# screen. This is intentional and should match the physical device.
 
 # SD hat
 unicornhat = UnicornHatSim(8, 8)
