@@ -55,14 +55,14 @@ class UnicornHatSim:
 
         # Set some defaults
         self._flip = flip
-        self.pixels = [(0, 0, 0)] * width * height
-        self.pixel_size = 20
+        self._pixels = [(0, 0, 0)] * width * height
+        self._pixel_size = 20
         self.width = width
         self.height = height
-        self.window_width = self.width * self.pixel_size
-        self.window_height = self.height * self.pixel_size
-        self.screen = None
-        self.on = False
+        self._window_width = self.width * self._pixel_size
+        self._window_height = self.height * self._pixel_size
+        self._screen = None
+        self._on = False
         self.rotation(0)
         self.clear()
 
@@ -78,22 +78,22 @@ class UnicornHatSim:
         pygame.init()
         pygame.display.set_caption("Simulator v" + VERSION)
         print("Unicorn HAT simulator v" + VERSION)
-        self.screen = pygame.display.set_mode(
-            [self.window_width, self.window_height])
-        self.on = True
+        self._screen = pygame.display.set_mode(
+            [self._window_width, self._window_height])
+        self._on = True
 
     def set_pixel_size(self, pixel_size):
         """Set the pixel size and resize the window (no error checking)"""
-        self.pixel_size = pixel_size
-        self.window_width = self.width * self.pixel_size
-        self.window_height = self.height * self.pixel_size
-        #self.screen = pygame.display.set_mode(
-            #[self.window_width, self.window_height])
+        self._pixel_size = pixel_size
+        self._window_width = self.width * self._pixel_size
+        self._window_height = self.height * self._pixel_size
+        #self._screen = pygame.display.set_mode(
+            #[self._window_width, self._window_height])
         self.show()
 
     def set_pixel(self, x, y, r, g=None, b=None):
         """Set the value of a pixel in the buffer based on RGB"""
-        if not self.on:
+        if not self._on:
             self.power_on()
         i = (y * self.width) + x
         if isinstance(r, tuple):
@@ -107,7 +107,7 @@ class UnicornHatSim:
                 raise ValueError('Invalid color!') from e
 
         try:
-            self.pixels[i] = [int(r), int(g), int(b)]
+            self._pixels[i] = [int(r), int(g), int(b)]
         except IndexError:
             print("Index out of bounds", x, "on", self.width, "and", y, "on", self.height)
 
@@ -118,14 +118,13 @@ class UnicornHatSim:
 
     def set_all(self, r, g, b):
         """Set all pixels the given RGB (in the buffer)"""
-        if not self.on:
+        if not self._on:
             self.power_on()
-        self.pixels = [(r, g, b)] * self.width * self.height
+        self._pixels = [(r, g, b)] * self.width * self.height
 
     def get_pixel(self, x, y):
         """Get the colour of a given pixel as a tuple"""
-        i = (y * self.width) + x
-        return tuple(self.pixels[i])
+        return tuple(self._pixels[(y * self.width) + x])
 
     def get_pixels(self):
         """Get all of the pixels (return the buffer)"""
@@ -136,16 +135,16 @@ class UnicornHatSim:
         for y in range(0, self.width):
             ret.append([])
             for x in range(0, self.height):
-                ret[y].append(self.pixels[(x * self.width) + y])
+                ret[y].append(self._pixels[(x * self.width) + y])
 
         return ret
 
     def show(self):
         """Update the HAT based on the data in the buffer"""
-        if not self.on:
+        if not self._on:
             self.power_on()
 
-        self.screen.fill((0, 0, 0))
+        self._screen.fill((0, 0, 0))
 
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:
@@ -154,23 +153,19 @@ class UnicornHatSim:
 
         for x in range(self.width):
             for y in range(self.height):
-                self.draw_led(x, y)
+                self.__draw_gfxcircle(x, y)
         pygame.display.update()
-
-    def draw_led(self, x, y):
-        """Draw a single LED (not sure why it's here.)"""
-        self.__draw_gfxcircle(x, y)
 
     def __draw_gfxcircle(self, x, y):
         """Draw a single LED"""
-        p = self.pixel_size
-        w_x = int(x * p + self.pixel_size / 2)
-        w_y = int(y * p + self.pixel_size / 2)
-        r = int(self.pixel_size / 4)
-        color = self.pixels[self.__index(x, y)]
-        #pygame.gfxdraw.aacircle(self.screen, w_x, w_y, r, (color[0],color[1],color[2],100))
-        pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, r, (color[0],color[1],color[2],140))
-        pygame.gfxdraw.filled_circle(self.screen, w_x, w_y, int(r*.7), color)
+        p = self._pixel_size
+        w_x = int(x * p + self._pixel_size / 2)
+        w_y = int(y * p + self._pixel_size / 2)
+        r = int(self._pixel_size / 4)
+        color = self._pixels[self.__index(x, y)]
+        #pygame.gfxdraw.aacircle(self._screen, w_x, w_y, r, (color[0],color[1],color[2],100))
+        pygame.gfxdraw.filled_circle(self._screen, w_x, w_y, r, (color[0],color[1],color[2],140))
+        pygame.gfxdraw.filled_circle(self._screen, w_x, w_y, int(r*.7), color)
 
     def get_shape(self):
         """Get the dimensions of the screen (HAT)"""
@@ -191,7 +186,7 @@ class UnicornHatSim:
     # Clear the buffers
     def clear(self):
         """Clear the buffer (but not the screen)"""
-        self.pixels = [(0, 0, 0)] * self.width * self.height
+        self._pixels = [(0, 0, 0)] * self.width * self.height
 
     def get_rotation(self):
         """Get the rotation setting for the HAT"""
