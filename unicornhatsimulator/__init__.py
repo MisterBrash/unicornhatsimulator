@@ -48,14 +48,13 @@ COLORS = {
 
 class UnicornHatSim:
     """Class representing a Pimoroni Unicorn HAT of various size"""
-    def __init__(self, width, height, rotation_offset=0):
+    def __init__(self, width, height, flip=False):
         # Compat with old library
         self.AUTO = None
         self.PHAT = None
 
         # Set some defaults
-        self.rotation_offset = rotation_offset
-        self.rotation(0)
+        self._flip = flip
         self.pixels = [(0, 0, 0)] * width * height
         self.pixel_size = 20
         self.width = width
@@ -64,6 +63,7 @@ class UnicornHatSim:
         self.window_height = self.height * self.pixel_size
         self.screen = None
         self.on = False
+        self.rotation(0)
         self.clear()
 
     @property
@@ -106,7 +106,11 @@ class UnicornHatSim:
             except KeyError as e:
                 raise ValueError('Invalid color!') from e
 
-        self.pixels[i] = [int(r), int(g), int(b)]
+        try:
+            self.pixels[i] = [int(r), int(g), int(b)]
+        except IndexError:
+            print("Index out of bounds", x, "on", self.width, "and", y, "on", self.height)
+
 
     def set_pixel_hsv(self, x, y, h, s=1.0, v=1.0):
         """Set a single pixel in the buffer based on Hue, Saturation, Vibrance"""
@@ -179,7 +183,11 @@ class UnicornHatSim:
 
     def rotation(self, r):
         """Set the rotation of the HAT"""
-        self._rotation = int(round(r/90.0)) % 3
+        # Round to the nearest 90 degrees if height == width
+        if self.width == self.height:
+            self._rotation = round(r/90) * 90 % 360
+        else:
+            self._rotation = round(r/180) * 180 % 360
 
     # Clear the buffers
     def clear(self):
@@ -188,7 +196,7 @@ class UnicornHatSim:
 
     def get_rotation(self):
         """Get the rotation setting for the HAT"""
-        return self._rotation * 90
+        return self._rotation
 
     def set_layout(self, *args):
         """Not used, here for compatibility"""
@@ -202,39 +210,22 @@ class UnicornHatSim:
     def __index(self, x, y):
         """Return the index of a pixel within the buffer"""
         # Offset to match device rotation (counter clockwise)
-        rot = (self.get_rotation() + self.rotation_offset) % 360
+        rot = self.get_rotation()
 
         if rot == 0:
             xx = x
-            yy = y
+            yy = self.height - 1 - y if self._flip else y
         elif rot == 90:
-            xx = x
-            yy = self.height - 1 - y
+            xx = self.height - 1 - y
+            yy = self.width - 1 - x if self._flip else x
         elif rot == 180:
             xx = self.width - 1 - x
-            yy = self.height - 1 - y
+            yy = y if self._flip else self.height - 1 - y
         elif rot == 270:
-            xx = self.width - 1 - x
-            yy = y
-        return (yy * self.width) + xx
-    # def __index(self, x, y):
-    #     """Return the index of a pixel within the buffer"""
-    #     # Offset to match device rotation
-    #     rot = (self.get_rotation() + self.rotation_offset) % 360
+            xx = y if self._flip else y
+            yy = x if self._flip else self.width - 1 - x
 
-    #     if rot == 0:
-    #         xx = x
-    #         yy = y
-    #     elif rot == 90:
-    #         xx = self.height - 1 - y
-    #         yy = x
-    #     elif rot == 180:
-    #         xx = self.width - 1 - x
-    #         yy = self.height - 1 - y
-    #     elif rot == 270:
-    #         xx = y
-    #         yy = self.width - 1 - x
-    #     return (yy * self.width) + xx
+        return (yy * self.width) + xx
 
 # Expose the three types of HATs. None are rotated by default,
 # origin is top-left with y-values increasing as you go down the
@@ -244,7 +235,7 @@ class UnicornHatSim:
 unicornhat = UnicornHatSim(8, 8)
 
 # Unicornhat HD (origin is the bottom-left)
-unicornhathd = UnicornHatSim(16, 16, 90)
+unicornhathd = UnicornHatSim(16, 16, True)
 
 # PHAT
 unicornphat = UnicornHatSim(8, 4)
