@@ -4,8 +4,8 @@ from Mark Pitman (https://pypi.org/project/unicorn-hat-sim/)
 which was a modified version from Jannis Hermanns (https://github.com/jayniz/unicorn-hat-sim)
 
 The clear function wasn't working as expected and set_all wasn't implemented.
-I've updated it below, however I'm not a python programmer
-and there might be a better way. ~ Matt Brash
+That snowballed into a pretty extensive adjustment / rewrite.
+I'm not a python programmer and there might be a better way. ~ Matt Brash
 
 Origin (0, 0) is top-left for PHAT and HAT, bottom-left for HATHD
 '''
