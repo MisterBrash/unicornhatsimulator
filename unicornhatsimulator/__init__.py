@@ -111,7 +111,6 @@ class UnicornHatSim:
         except IndexError:
             print("Index out of bounds", x, "on", self.width, "and", y, "on", self.height)
 
-
     def set_pixel_hsv(self, x, y, h, s=1.0, v=1.0):
         """Set a single pixel in the buffer based on Hue, Saturation, Vibrance"""
         r, g, b = [int(n*255) for n in colorsys.hsv_to_rgb(h, s, v)]
