@@ -7,8 +7,7 @@ The clear function wasn't working as expected and set_all wasn't implemented.
 I've updated it below, however I'm not a python programmer
 and there might be a better way. ~ Matt Brash
 
-Origin (0, 0) is top-left for all three types of HATs. As far as I know, this is the
-way Pimoroni designed them and it matches computer screens and game canvas, etc.
+Origin (0, 0) is top-left for PHAT and HAT, bottom-left for HATHD
 '''
 
 # Version 1.0.4
@@ -199,22 +198,40 @@ class UnicornHatSim:
 
     def __index(self, x, y):
         """Return the index of a pixel within the buffer"""
-        # Offset to match device rotation
+        # Offset to match device rotation (counter clockwise)
         rot = (self.get_rotation() + self.rotation_offset) % 360
 
         if rot == 0:
             xx = x
             yy = y
         elif rot == 90:
-            xx = self.height - 1 - y
-            yy = x
+            xx = x
+            yy = self.height - 1 - y
         elif rot == 180:
             xx = self.width - 1 - x
             yy = self.height - 1 - y
         elif rot == 270:
-            xx = y
-            yy = self.width - 1 - x
+            xx = self.width - 1 - x
+            yy = y
         return (yy * self.width) + xx
+    # def __index(self, x, y):
+    #     """Return the index of a pixel within the buffer"""
+    #     # Offset to match device rotation
+    #     rot = (self.get_rotation() + self.rotation_offset) % 360
+
+    #     if rot == 0:
+    #         xx = x
+    #         yy = y
+    #     elif rot == 90:
+    #         xx = self.height - 1 - y
+    #         yy = x
+    #     elif rot == 180:
+    #         xx = self.width - 1 - x
+    #         yy = self.height - 1 - y
+    #     elif rot == 270:
+    #         xx = y
+    #         yy = self.width - 1 - x
+    #     return (yy * self.width) + xx
 
 # Expose the three types of HATs. None are rotated by default,
 # origin is top-left with y-values increasing as you go down the
@@ -223,8 +240,8 @@ class UnicornHatSim:
 # SD hat
 unicornhat = UnicornHatSim(8, 8)
 
-# Unicornhat HD
-unicornhathd = UnicornHatSim(16, 16)
+# Unicornhat HD (origin is the bottom-left)
+unicornhathd = UnicornHatSim(16, 16, 90)
 
 # PHAT
 unicornphat = UnicornHatSim(8, 4)
