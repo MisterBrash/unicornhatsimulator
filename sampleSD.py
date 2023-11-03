@@ -11,7 +11,6 @@ try:
 except ImportError:
     from unicornhatsimulator import unicornhat as u
 
-
 while True:
     x = randint(0, 7)
     y = randint(0, 7)

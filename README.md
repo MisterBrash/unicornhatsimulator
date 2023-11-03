@@ -12,6 +12,9 @@ The version you see here includes the following edits:
 - Added `get_pixels()` which returns the entire buffer as an array of arrays of arrays ([y][x][r, g, b])
 - Modified `set_pixel()` to accept a colour string, for example `set_pixel(x, y, "red")` see [set_pixel.md](set_pixel.md)
 - Added the non-standard `set_pixel_size(value)` which is only for the simulator to increase or decrease the dot size
+- Fixed the rotation code to rotate counter-clockwise correctly
+- Commented the code thoroughly
+- Size the initial window based on the size of the HAT and pixel size
 
 ## Usage
 
@@ -43,8 +46,8 @@ You can choose from `import unicornhathd` (16x16), `import unicornhat` (8x8) and
 ## TODO
 
 - [ ] find a python person to show me how this would be done properly. For example - leaving the window open at the end.
-- [ ] fix/check rotation
-- [ ] add a proper LED glow effect so it looks more like a real unicorn HAT
+- [x] fix/check rotation
+- [x] add a proper LED glow effect so it looks more like a real unicorn HAT
 - [x] publish via pip ([now online at pypi](https://pypi.org/project/unicornhatsimulator/))
 - [x] add `get_pixel(x, y)` and `get_pixels`
 - [x] add non-standard `set_pixel_size(p)` to increase or decrease dot sizes
