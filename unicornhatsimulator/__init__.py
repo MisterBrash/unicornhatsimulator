@@ -21,6 +21,8 @@ try:
 except ImportError:
     print("To simulate a unicorn HAT on your computer, please pip install pygame")
 
+VERSION = "1.0.4"
+
 COLORS = {
     'red': (255, 0, 0),
     'lime': (0, 255, 0),
@@ -73,8 +75,9 @@ class UnicornHatSim:
 
     def power_on(self):
         """Initialize pygame, show the window, etc"""
-        pygame.init()   
-        pygame.display.set_caption("Unicorn HAT simulator")
+        pygame.init()
+        pygame.display.set_caption("Simulator v" + VERSION)
+        print("Unicorn HAT simulator v" + VERSION)
         self.screen = pygame.display.set_mode(
             [self.window_width, self.window_height])
         self.on = True
