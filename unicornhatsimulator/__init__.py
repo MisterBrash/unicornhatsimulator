@@ -152,6 +152,7 @@ class UnicornHatSim:
         for x in range(self.width):
             for y in range(self.height):
                 self.__draw_gfxcircle(x, y)
+
         pygame.display.update()
 
     def __draw_gfxcircle(self, x, y):
