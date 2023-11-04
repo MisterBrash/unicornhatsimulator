@@ -87,8 +87,6 @@ class UnicornHatSim:
         self._pixel_size = pixel_size
         self._window_width = self.width * self._pixel_size
         self._window_height = self.height * self._pixel_size
-        #self._screen = pygame.display.set_mode(
-            #[self._window_width, self._window_height])
         self.show()
 
     def set_pixel(self, x, y, r, g=None, b=None):
@@ -183,7 +181,6 @@ class UnicornHatSim:
         else:
             self._rotation = round(r/180) * 180 % 360
 
-    # Clear the buffers
     def clear(self):
         """Clear the buffer (but not the screen)"""
         self._pixels = [(0, 0, 0)] * self.width * self.height
