@@ -74,4 +74,4 @@ while (True):
         dots(MICROSECOND - now.microsecond)
     u.show()
 
-    sleep(0.01)
+    sleep(0.05)
