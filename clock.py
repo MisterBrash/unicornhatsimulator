@@ -10,6 +10,7 @@ except ImportError:
 u.rotation(270)
 u.clear()
 u.brightness(0.8)
+MICROSECOND = 1000000
 
 small_nums = [[[True,True,True],[True,False,True],[True, False, True],[True,False,True],[True,True,True]],
         [[False, False, True],[False, False, True],[False, False, True],[False, False, True],[False, False, True]],
@@ -27,7 +28,7 @@ def draw_num(top, left, digit, verbose = False):
     for y in range(5):
         if verbose: print(nums[digit][y][0], nums[digit][y][1], nums[digit][y][2])
         for x in range(3):
-            if small_nums[digit][y][x]: u.set_pixel(top+y, left+x, 255, 200, 200)
+            if small_nums[digit][y][x]: u.set_pixel(top+y, left+x, 255, 220, 220)
 
 # Display a given number at given top/left
 def display(num, top = 0, left = 0):
@@ -39,9 +40,12 @@ def display(num, top = 0, left = 0):
         left = left + 4
 
 def dots(val):
-    if (val % 2 == 0):
-        u.set_pixel(3, 7, 100, 50, 50)
-        u.set_pixel(5, 7, 100, 50, 50)
+    r = int(150 * (val % MICROSECOND)/MICROSECOND)
+    g = int(100 * (val % MICROSECOND)/MICROSECOND)
+
+    u.set_pixel(3, 7, r, g, g)
+    u.set_pixel(5, 7, r, g, g)
+
 
 while (True):
     u.clear()
@@ -64,7 +68,10 @@ while (True):
         hour = " " + hour
     display(hour, 2, 0)
     display(str(now.minute), 2, 8)
-    dots(now.second)
+    if now.second % 2 == 0:
+        dots(now.microsecond)
+    else:
+        dots(MICROSECOND - now.microsecond)
     u.show()
 
-    sleep(0.03)
+    sleep(0.01)
